@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org/">
+  <head th:replace="~{fragments::head}">
+
+  </head>
+  <body class="goto-here">
+  <style>
+	  .applyCoupon:hover{
+		  color: #82ae46 !important; /* Màu chữ khi hover vào */
+	  }
+
+	  .btn-total:focus,
+	  .btn-total:active {
+		  outline: none; /* Loại bỏ border khi focus và active */
+	  }
+  </style>
+
+  <div th:replace="~{fragments::container}" class="py-1 bg-primary">
+
+  </div>
+  <nav th:replace="~{fragments::navbar}" class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
+  </nav>
+  <!-- END nav -->
+
+    <div class="hero-wrap hero-bread" style="background-image: url('images/bg_1.jpg');">
+      <div class="container">
+        <div class="row no-gutters slider-text align-items-center justify-content-center">
+          <div class="col-md-9 ftco-animate text-center">
+          	<p class="breadcrumbs"><span class="mr-2"><a href="index.html">Home</a></span> <span>Cart</span></p>
+            <h1 class="mb-0 bread">My Cart</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <section class="ftco-section ftco-cart">
+			<div class="container">
+				<div class="row">
+    			<div class="col-md-12 ftco-animate">
+    				<div class="cart-list">
+						<p class="text-center" th:if="${check == 1}"><i class="text-info font-weight-bold text-center"></i>
+							You don't have any items in your cart</p>
+						<div th:if = "${session.CheckQuantity == 0}" class="alert alert-danger text-center" th:text="${session.message}" style="animation: fadeOut 5s ease-in-out forwards;">
+						</div>
+						<div th:if = "${session.CheckQuantity == 2}" class="alert alert-danger text-center" th:text="${session.message}" style="animation: fadeOut 5s ease-in-out forwards;">
+						</div>
+
+	    				<table class="table" th:if="${check == 2}">
+						    <thead class="thead-primary">
+						      <tr class="text-center">
+
+						        <th>&nbsp;</th>
+						        <th>Product name</th>
+						        <th>Price</th>
+						        <th>Quantity</th>
+						        <th>Total</th>
+								<th>Update</th>
+						      </tr>
+						    </thead>
+						    <tbody>
+						      <tr class="text-center" th:each="cartItem : ${shoppingCart.getCartItems()}">
+
+						        
+						        <td class="image-prod"><div class="img" th:style="'background-image: url(\'data:image/jpeg;base64,' + ${cartItem.product.image} + '\');'"></div></td>
+						        
+						        <td class="product-name">
+						        	<h3 th:text="${cartItem.product.name}"></h3>
+						        	<p th:text="${cartItem.product.description}"></p>
+						        </td>
+						        
+						        <td class="price" th:text="${cartItem.unitPrice}"></td>
+							 <form id="formSubmit" th:action="@{/update-cart}" method="POST">
+								 <input type="hidden" th:value="${cartItem.product.id}" name ="id">
+						        <td class="quantity">
+						        	<div class="input-group mb-3">
+					             	<input type="text" name="quantity" class="quantity form-control input-number" th:value="${cartItem.quantity}" min="1" max="100">
+					          	</div>
+					          </td>
+						        
+						        <td class="total" th:text="'$'+${cartItem.quantity * cartItem.unitPrice}"></td>
+								  <td>
+									  <button type="submit" name="action" value="update" title="Update"
+											  class="btn btn-primary" id="btnUpdate">
+										  Update
+									  </button>
+									  <button type="submit" name="action" value="delete" title="Update"
+											  class="btn btn-danger" id="btnDelete">
+										  Delete
+									  </button>
+								  </td>
+							</form>
+						      </tr><!-- END TR-->
+
+
+						    </tbody>
+						  </table>
+					  </div>
+    			</div>
+    		</div>
+    		<div class="row justify-content-end" th:if="${check == 2}">
+    			<div class="col-lg-4 mt-5 cart-wrap ftco-animate">
+    				<div class="cart-total mb-3">
+    					<h3>Coupon Code</h3>
+    					<p>Enter your coupon code if you have one</p>
+  				<form th:action="@{/discount-cart}" class="info" method="POST">
+	              <div class="form-group">
+	              	<label for="">Coupon code</label>
+	                <input type="text" class="form-control text-left px-3" placeholder="" name="discount">
+					  <input type="hidden" th:value="${shoppingCart.id}" th:name="id">
+	              </div>
+					<button type="submit" style="border: none !important;background: white;"  class="btn-total">
+						<p><a  class="btn btn-primary py-3 px-4 applyCoupon" style="color: white;text-decoration: none;">Apply Coupon</a></p>
+					</button>
+
+				</form>
+					</div>
+    			</div>
+    			<div class="col-lg-4 mt-5 cart-wrap ftco-animate">
+    				<div class="cart-total mb-3">
+
+	              </div>
+	            </form>
+
+    			</div>
+    			<div class="col-lg-4 mt-5 cart-wrap ftco-animate">
+    				<div class="cart-total mb-3">
+    					<h3>Cart Totals</h3>
+    					<p class="d-flex">
+    						<span>Subtotal</span>
+    						<span th:text="${shoppingCart.getTotalPrice()}"></span>
+    					</p>
+    					<p class="d-flex">
+    						<span>Delivery</span>
+    						<span>Free</span>
+    					</p>
+    					<p class="d-flex">
+    						<span>Discount</span>
+    						<span th:if="${Dis == null}">$0.0</span>
+							<span th:if="${Dis != null}" th:text="${Dis.getCostSale()*100}+'%'"></span>
+    					</p>
+    					<hr>
+    					<p class="d-flex total-price" th:if="${Dis != null}">
+						<span >Total</span>
+						<span class="" style="text-decoration: line-through;" th:text="${shoppingCart.getTotalPrice()}"></span><span  class="price-sale" th:text="${shoppingCart.getTotalPrice()-shoppingCart.getTotalPrice()*Dis.getCostSale()}"></span>
+					   </p>
+						<p class="d-flex total-price" th:if="${Dis == null}">
+
+							<span>Total</span>
+							<span class="price-sale" th:text="${shoppingCart.getTotalPrice()}"></span>
+						</p>
+
+    				</div>
+    				<p th:if="${Dis != null}"><a th:href="@{/check-out(discount=${Dis.code})}" class="btn btn-primary py-3 px-4">Proceed to Checkout</a></p>
+					<p th:if="${Dis == null}"><a th:href="@{/check-out}" class="btn btn-primary py-3 px-4">Proceed to Checkout</a></p>
+    			</div>
+    		</div>
+			</div>
+		</section>
+
+		<section class="ftco-section ftco-no-pt ftco-no-pb py-5 bg-light">
+      <div class="container py-4">
+        <div class="row d-flex justify-content-center py-5">
+          <div class="col-md-6">
+          	<h2 style="font-size: 22px;" class="mb-0">Subcribe to our Newsletter</h2>
+          	<span>Get e-mail updates about our latest shops and special offers</span>
+          </div>
+          <div class="col-md-6 d-flex align-items-center">
+            <form action="#" class="subscribe-form">
+              <div class="form-group d-flex">
+                <input type="text" class="form-control" placeholder="Enter email address">
+                <input type="submit" value="Subscribe" class="submit px-3">
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+    <footer th:replace="~{fragments::footer}" class="ftco-footer ftco-section">
+
+    </footer>
+    
+  
+
+  <!-- loader -->
+  <div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00"/></svg></div>
+
+  <script>
+	  // // jquery
+	  //
+	  // var btnUpdate = document.getElementById("btnUpdate");
+	  // btnUpdate.addEventListener('click',async function (e) {
+		//   e.preventDefault();
+		//   var data = {};
+		//   var formData = $('#formSubmit').serializeArray();
+		//   $.each(formData, function (i, v) { // v: include name and value of input
+		// 	  data["" + v.name + ""] = v.value;
+		//   });
+		//   await Update(data);
+	  // })
+	  //
+	  // async function Update(data) {
+		//   try{
+		// 	  let response = await fetch('http://localhost:8020/shop/update-cart', {
+		// 		  method: 'POST',
+		// 		  headers: {
+		// 			  'Content-Type': 'application/json;charset=utf-8'
+		// 		  },
+		// 		  body: JSON.stringify(data)
+		// 	  });
+		// 	  let result = await response.json(); // trả đối tượng dưới dạng chuỗi json
+		// 	  if(result != "Wrong"){
+		// 		  window.location.href = "http://localhost:8020/shop/cart" ;
+		// 	  }
+		// 	  else{
+		// 		  window.location.href = "http://localhost:8020/shop/cart"  ;
+		// 	  }
+	  //
+		//   } catch(error) {
+		// 	  window.location.href = "http://localhost:8020/shop/cart" ;
+		//   }
+	  // }
+
+  </script>
+		<div th:replace="~{fragments::script}"></div>
+
+
+  <script>
+		$(document).ready(function(){
+
+		var quantitiy=0;
+		   $('.quantity-right-plus').click(function(e){
+		        
+		        // Stop acting like a button
+		        e.preventDefault();
+		        // Get the field name
+		        var quantity = parseInt($('#quantity').val());
+		        
+		        // If is not undefined
+		            
+		            $('#quantity').val(quantity + 1);
+
+		          
+		            // Increment
+		        
+		    });
+
+		     $('.quantity-left-minus').click(function(e){
+		        // Stop acting like a button
+		        e.preventDefault();
+		        // Get the field name
+		        var quantity = parseInt($('#quantity').val());
+		        
+		        // If is not undefined
+		      
+		            // Increment
+		            if(quantity>0){
+		            $('#quantity').val(quantity - 1);
+		            }
+		    });
+		    
+		});
+	</script>
+    
+  </body>
+</html>

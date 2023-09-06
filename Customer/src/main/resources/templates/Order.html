@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org/">
+  <head th:replace="~{fragments::head}">
+  </head>
+  <body class="goto-here">
+  <div th:replace="~{fragments::container}" class="py-1 bg-primary">
+
+  </div>
+  <nav th:replace="~{fragments::navbar}" class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
+  </nav>
+  <!-- END nav -->
+
+    <div class="hero-wrap hero-bread" style="background-image: url('images/bg_1.jpg');">
+      <div class="container">
+        <div class="row no-gutters slider-text align-items-center justify-content-center">
+          <div class="col-md-9 ftco-animate text-center">
+          	<p class="breadcrumbs"><span class="mr-2"><a href="index.html">Home</a></span> <span>Sign in</span></p>
+            <h1 class="mb-0 bread">Sign in</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+
+        <section class="ftco-section contact-section bg-light">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div th:if="${success}" class="text-center alert-success alert" style="animation: fadeOut 5s ease-in-out forwards;">
+                            <p th:text="${success}"></p>
+                        </div>
+                        <div class="table-main table-responsive">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th class="order-date">Order Date</th>
+                                    <th>Delivery Date</th>
+                                    <th class="price-pr">Order Status</th>
+
+                                    <th class="quantity-box">Quantity</th>
+                                    <th>Total Price</th>
+                                    <th class="total-pr">Payment Method</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="order : ${orders}">
+
+                                    <td class="order-date">
+                                        <span><b>[(${order.orderDate})]</b></span>
+                                    </td>
+                                    <td class="name-pr" >
+                                        <span th:if = "${order.isAccept != false}" href="#">
+                                    [(${order.deliveryDate})]
+                                        </span>
+                                        <span th:if = "${order.isAccept == false}"><p>Pending</p></span>
+                                    </td>
+                                    <td class="price-pr" th:if="${order.getPaymentMethod().equals('Cash')}">
+                                        <span th:if="${!order.getOrderStatus().equals('Success')}"><p th:text="${order.orderStatus}" style="color: #f4b718; font-size: 20px"></p></span>
+                                        <span th:if="${order.getOrderStatus().equals('Success')}" style="color: #82ae46; font-size: 20px">Success</span>
+                                    </td>
+                                    <td class="price-pr" th:if="${order.getPaymentMethod().equals('VNPAY')}">
+                                        <input th:if="${order.getOrderStatus().equals('Pending')}" type="hidden" name="id" id = "order_id" th:value="${order.id}">
+                                        <span th:if="${order.getOrderStatus().equals('Pending')}" > <p id="countdown-text"></p> </span>
+                                        <span th:if="${order.getOrderStatus().equals('Fail')}"><p th:text="${order.orderStatus}" style="color: #f4b718; font-size: 20px"></p></span>
+                                        <span th:if="${order.getOrderStatus().equals('Success')}" style="color: #82ae46; font-size: 20px">Success</span>
+                                    </td>
+
+                                    <td class="quantity-box" th:text="${order.quantity}"> </td>
+                                    <td class="total-pr">
+                                        <span><p style="color: red">$ [(${order.totalPrices})]</p></span>
+                                    </td>
+                                    <td class="total-pr" style="color: black">
+                                        <span></span>[(${order.paymentMethod})]</span>
+                                    </td>
+                                    <td>
+                                        <a id="cancel-order" th:if="${order.getOrderStatus().equals('Pending')}" th:href="@{/cancel-order(id = ${order.id})}" class="btn btn-danger button-cancel" >Cancel</a>
+                                        <span th:if="${order.getOrderStatus().equals('Success')}" style="color: #82ae46; font-size: 20px">Success</span>
+                                        <span th:if="${order.getOrderStatus().equals('Fail')}" style="color: #f4b718 ; font-size: 20px">Fail</span>
+                                    </td>
+                                    </a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+  <footer th:replace="~{fragments::footer}" class="ftco-footer ftco-section">
+
+  </footer>
+
+  <!-- loader -->
+  <div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00"/></svg></div>
+  <div th:replace="~{fragments::script}"></div>
+  <script >
+
+
+       var order_id = document.getElementById('order_id').value;
+      function convertToMinutesAndSeconds(seconds) {
+          // Tính số phút và số giây
+          var minutes = Math.floor(seconds / 60);
+          var remainingSeconds = seconds % 60;
+
+          // Định dạng kết quả
+          var formattedTime = minutes + " : " + remainingSeconds;
+
+          return formattedTime+"";
+      }
+      function UpdateContdown(){
+            var countdown = sessionStorage.getItem('countdown');
+            if(countdown === null || countdown < 0) countdown = 120;
+          document.getElementById('countdown-text').innerText = convertToMinutesAndSeconds(countdown);
+          countdown--;
+          sessionStorage.setItem('countdown',countdown);
+          if(countdown < 0){
+              window.location.href = "http://localhost:8020/shop/fail-order?id="+order_id;
+          }
+          else{
+              setTimeout(UpdateContdown, 1000); // Cập nhật sau mỗi giây
+          }
+      }
+
+      document.addEventListener('DOMContentLoaded', function() {
+          UpdateContdown();
+      });
+
+      var cancel = document.getElementById('cancel-order');
+       cancel.addEventListener('click',function (){
+           sessionStorage.removeItem('countdown');
+       })
+  </script>
+    
+  </body>
+</html>

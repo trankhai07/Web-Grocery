@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org/">
+  <head th:replace="~{fragments::head}">
+  </head>
+  <body class="goto-here">
+  <div th:replace="~{fragments::container}" class="py-1 bg-primary">
+
+  </div>
+  <nav th:replace="~{fragments::navbar}" class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
+  </nav>
+  <!-- END nav -->
+
+    <div class="hero-wrap hero-bread" style="background-image: url('images/bg_1.jpg');">
+      <div class="container">
+        <div class="row no-gutters slider-text align-items-center justify-content-center">
+          <div class="col-md-9 ftco-animate text-center">
+          	<p class="breadcrumbs"><span class="mr-2"><a href="index.html">Home</a></span> <span>Sign up</span></p>
+            <h1 class="mb-0 bread">Sign up</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+
+        <section class="ftco-section contact-section bg-light">
+            <div class="container">
+
+                <form style="width: 400px; margin:0 auto;" th:action="@{/do-register}" method="POST" th:object="${customerDto}" >
+                    <div th:if = "${success}">
+                        <p class = "alert alert-success" th:text = "${success}"></p>
+                    </div>
+                    <div th:if = "${error}">
+                        <p class = "alert alert-danger" th:text = "${error}"></p>
+                    </div>
+                    <div class="form-outline mb-4">
+                        <input type="text" id="Firstname" name ="firstname"  th:field = "*{firstName}" class="form-control" required/>
+                        <label class="form-label" for="Firstname">First name</label>
+                        <div class="alert alert-danger" th:if = "${#fields.hasErrors('firstName')}"
+                             th:errors = "*{firstName}"></div>
+                    </div>
+                    <div class="form-outline mb-4">
+                        <input type="text" id="Lastname" class="form-control" name = "lastname" th:field="*{lastName}" required />
+                        <label class="form-label" for="Lastname">Last name</label>
+                        <div class="alert alert-danger" th:if = "${#fields.hasErrors('lastName')}"
+                             th:errors = "*{lastName}"></div>
+                    </div>
+                    <!-- Email input -->
+                    <div class="form-outline mb-4">
+                        <input type="text" id="form2Example1" class="form-control" name = "username" th:field="*{username}" required/>
+                        <label class="form-label" for="form2Example1">Username</label>
+                    </div>
+
+                    <!-- Password input -->
+                    <div class="form-outline mb-4">
+                        <input type="password" id="form2Example2" class="form-control" name = "password" th:field="*{password}" required/>
+                        <label class="form-label" for="form2Example2">Password</label>
+                        <div class="alert alert-danger" th:if = "${#fields.hasErrors('password')}"
+                             th:errors = "*{password}"></div>
+                    </div>
+
+                    <!--  Repeat Password input -->
+                    <div class="form-outline mb-4">
+                        <input type="password" id="form2Example3" class="form-control" name = "confirmPassword" th:field="*{confirmPassword}" required/>
+                        <label class="form-label" for="form2Example3">Verify password</label>
+                    </div>
+
+                    <!-- Submit button -->
+                    <button type="submit" class="btn btn-primary btn-block mb-4">Sign up</button>
+
+                    <!-- Register buttons -->
+                    <div class="text-center">
+                        <p>Do You Already Have An Account ? <a th:href="@{/login}"> Sign in now </a></p>
+                        <p>or sign up with:</p>
+                        <button type="button" class="btn btn-link btn-floating mx-1" style="text-decoration: none">
+                            <i class="fab fa-facebook-f icon-facebook" ></i>
+                        </button>
+
+                        <button type="button" class="btn btn-link btn-floating mx-1" style="text-decoration: none">
+                            <i class="fab fa-google icon-google"></i>
+                        </button>
+
+                        <button type="button" class="btn btn-link btn-floating mx-1" style="text-decoration: none">
+                            <i class="fab fa-twitter icon-twitter"></i>
+                        </button>
+
+                        <button type="button" class="btn btn-link btn-floating mx-1" style="text-decoration: none">
+                            <i class="fab fa-github icon-instagram"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+  <footer th:replace="~{fragments::footer}" class="ftco-footer ftco-section">
+
+  </footer>
+
+  <!-- loader -->
+  <div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00"/></svg></div>
+  <div th:replace="~{fragments::script}"></div>
+    
+  </body>
+</html>

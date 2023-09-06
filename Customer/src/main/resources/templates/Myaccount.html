@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org/">
+  <head th:replace="~{fragments::head}">
+  </head>
+  <body class="goto-here">
+  <div th:replace="~{fragments::container}" class="py-1 bg-primary">
+
+  </div>
+  <nav th:replace="~{fragments::navbar}" class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
+  </nav>
+  <!-- END nav -->
+
+    <div class="hero-wrap hero-bread" style="background-image: url('images/bg_1.jpg');">
+      <div class="container">
+        <div class="row no-gutters slider-text align-items-center justify-content-center">
+          <div class="col-md-9 ftco-animate text-center">
+          	<p class="breadcrumbs"><span class="mr-2"><a href="index.html">Home</a></span> <span>Sign in</span></p>
+            <h1 class="mb-0 bread">Sign in</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+
+        <section class="ftco-section contact-section bg-light">
+            <div class="container">
+                <h2 class="formTitle" style="width: 400px; margin-bottom: 30px; margin-left: auto; margin-right: auto;">
+                    <i>Personal Information</i>
+                </h2>
+                <div th:if="${success}"  class="text-center alert alert-success" style="width: 400px; margin-bottom: 30px; margin-left: auto; margin-right: auto; animation: fadeOut 5s ease-in-out forwards;">
+                    <p th:text="${success}"></p>
+                </div>
+                <div th:if="${information}"  class="text-center alert alert-danger" style="width: 400px; margin-bottom: 30px; margin-left: auto; margin-right: auto; animation: fadeOut 5s ease-in-out forwards;">
+                    <p th:text="${information}"></p>
+                </div>
+                <form th:action="@{/update-profile}" method="post" style="width: 400px; margin:0 auto;" th:object="${customer}">
+                    <!-- Email input -->
+                    <div class="alert alert-warning"
+                         th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></div>
+                    <div class="form-outline mb-4" style="height: 70px;">
+                        <label class="form-label" for="firstname">First name *</label>
+                        <input type="text" id="firstname" class="form-control" th:field="*{firstName}" style="height: 45px !important;" required />
+
+                    </div>
+
+                    <!-- Email input -->
+                    <div class="alert alert-warning"
+                         th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></div>
+                    <div class="form-outline mb-4" style="height: 70px;">
+                        <label class="form-label" for="lastname">Last name *</label>
+                        <input type="text" id="lastname" class="form-control" th:field="*{lastName}" style="height: 45px !important;" required />
+
+                    </div>
+
+                    <!-- Email input -->
+                    <div class="form-outline mb-4" style="height: 70px;">
+                        <label class="form-label" for="username">User name *</label>
+                        <input type="text" id="username" class="form-control" th:field="*{username}" style="height: 45px !important;" readonly />
+                    </div>
+
+                    <div class="form-outline mb-4" style="height: 70px;">
+                        <label class="form-label" for="phoneNumber">Phone number *</label>
+                        <input type="number" th:field="*{phoneNumber}"
+                               th:placeholder="${customer.phoneNumber != null} ? ${customer.phoneNumber} : 'Enter your phone number'"
+                               id="phoneNumber" name="phonenumber" maxlength="15" minlength="10" style="height: 45px !important;" class="form-control" >
+                    </div>
+
+                    <div class="form-outline mb-4" style="height: 70px;">
+                        <label class="form-label" for="address">Address *</label>
+                        <input type="text" id="address" class="form-control" th:field="*{address}" style="height: 45px !important;" required/>
+                    </div>
+
+                    <div class="form-outline mb-4" style="height: 70px;">
+                        <label class="form-label" for="country">Country *</label>
+
+                        <select class="form-control" id="country"  name="country" th:field="*{country}" style="height: 45px !important;"  required>
+                            <option value="">-SELECT-</option>
+                            <option th:each="country : ${countries}" th:value="${country.id}" th:text="${country.name}"></option>
+                        </select>
+                    </div>
+
+                    <div class="form-outline mb-4" style="height: 70px;">
+                        <label class="form-label" for="city">City *</label>
+
+                        <select class="form-control" id="city"  name="city" th:field="*{city}" style="height: 45px !important;"  required>
+                            <option value="">-SELECT-</option>
+                            <option th:each="city : ${cities}" th:value="${city.id}" th:text="${city.name}"></option>
+                        </select>
+                    </div>
+
+                    <!-- Submit button -->
+                    <button type="submit" class="btn btn-primary btn-block mb-4" style="margin-top: 50px;">Save</button>
+                    <div class="text-center">
+                        <p>You want to change password?<a th:href="@{/change-password}" >Change Password</a></p>
+                    </div>
+                    <div class="text-center">
+                        <p>You want to log out?<a th:href="@{/logout}" style="color: red !important;">Logout</a></p>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+  <footer th:replace="~{fragments::footer}" class="ftco-footer ftco-section">
+
+  </footer>
+
+  <!-- loader -->
+  <div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00"/></svg></div>
+  <div th:replace="~{fragments::script}"></div>
+    
+  </body>
+</html>
